@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "concurrently": "^5.3.0"
+  },
+  "proxy": "http://localhost:3001",
+  "scripts": {
+    "frontend": "cd frontend && npm start",
+    "backend": "cd backend && node server.js",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+  }
+}
