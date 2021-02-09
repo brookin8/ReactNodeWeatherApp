@@ -1,27 +1,45 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { IWeatherData, IWeatherQuery, WeatherService } from './Services';
+import LocationPrompt from './LocationPrompt/LocationPrompt';
+import LocationDisplay from './LocationDisplay/LocationDisplay';
+import { IAppProps, IAppState } from './IApp';
 
-function App() {
-  let response: any = fetch('api/greeting').then((resp) => resp.json()).then(data => console.log(data));
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component<IAppProps,IAppState> {
+  constructor(props: IAppProps) {
+    super(props);
+    this.state = {
+        weatherData: {
+          id: -1,
+          city: '',
+          state: '',
+          country: '',
+          mainDescription: '',
+          detailedDescription: '',
+          errorMessage: ''
+        },
+        loaded: false
+    };
+    this.getWeather = this.getWeather.bind(this);
+  }
+
+  async getWeather(params: IWeatherQuery): Promise<void> {
+    let _weatherData = await WeatherService.getWeather(params);
+    this.setState({
+      weatherData: _weatherData,
+      loaded: true
+    });
+  }
+
+  render() {
+    //let response: any = fetch('api/greeting').then((resp) => resp.json()).then(data => console.log(data));
+    return (
+      <div className="App">
+        <LocationPrompt getWeather={this.getWeather}/>
+        {this.state.loaded && <LocationDisplay weatherData={this.state.weatherData}/>}
+      </div>
+    );
+  }
 }
 
 export default App;
