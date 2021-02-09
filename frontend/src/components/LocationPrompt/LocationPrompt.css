@@ -1,0 +1,11 @@
+.mtb2rem {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+.locationSearchInput {
+    width: 275px !important;
+    margin: 0px auto;
+}
+.locationSearchButton {
+    cursor: pointer;
+}

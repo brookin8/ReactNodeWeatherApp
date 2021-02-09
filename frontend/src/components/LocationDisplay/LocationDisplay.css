@@ -1,0 +1,38 @@
+.textAlignLeft {
+    text-align: left;
+}
+.textAlignRight {
+    text-align: right;
+}
+.mb10 {
+    margin-bottom: 10px;
+}
+.mb30 {
+    margin-bottom: 30px;
+}
+.locationName {
+    font-size: 1.5rem;
+    font-weight:bold;
+}
+.locationDisplayCard {
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 30px;
+    margin-top: 30px;
+    border-radius: 10px;
+}
+.mainTemp {
+    font-size: 3rem;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+}
+.mainDescription {
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding-right: 15px;
+}
+.errorMessage {
+    color: black;
+    font-weight: bold;
+    font-size: 1.2rem;
+}

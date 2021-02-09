@@ -1,29 +1,4 @@
-export interface IWeatherQuery {
-    city?: string;
-    state?: string;
-    country?: string;
-    zip?: number;
-}
-
-export interface IWeatherData {
-    id: number;
-    city: string;
-    state: string;
-    country: string;
-    mainDescription: string;
-    detailedDescription: string;
-    temp?: number;
-    feelsLike?: number;
-    windSpeed?: number;
-    windDirection?: string;
-    pressure?: number;
-    humidity?: number;
-    dt?: number;
-    sunrise?: number;
-    sunset?: number;
-    timezone?: number;
-    errorMessage: string;
-}
+import { IWeatherData, IWeatherQuery } from '../classes/WeatherClasses';
 
 export const WeatherService = { 
     getWeather: async function(params: IWeatherQuery): Promise<IWeatherData> {
@@ -48,6 +23,7 @@ export const WeatherService = {
             country: result.sys ? result.sys.country : '',
             mainDescription: result.weather && result.weather.length > 0 ? result.weather[0].main : '',
             detailedDescription: result.weather && result.weather.length > 0 ? result.weather[0].description : '',
+            iconId: result.weather && result.weather.length > 0 ? result.weather[0].icon : '',
             temp: result.main ? result.main.temp : '',
             feelsLike: result.main ? result.main.feels_like : '',
             windSpeed: result.wind ? result.wind.speed : '',

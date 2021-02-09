@@ -1,4 +1,4 @@
-import { IWeatherData } from "./Services";
+import { IWeatherData } from "./classes/WeatherClasses";
 
 export interface IAppProps {}
 
