@@ -15,6 +15,7 @@ class LocationPrompt extends React.Component<ILocationPromptProps,ILocationPromp
     };
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleOnBlur = this.handleOnBlur.bind(this);
     this.formatWeatherParams = this.formatWeatherParams.bind(this);
   }
   setErrorMessage(message: string) : void {
@@ -27,6 +28,9 @@ class LocationPrompt extends React.Component<ILocationPromptProps,ILocationPromp
       e.preventDefault();
       this.props.getWeather(this.state.weatherParams);
     }
+  }
+  handleOnBlur() : void {
+    this.props.getWeather(this.state.weatherParams);
   }
   // Parses user input into IWeatherQuery
   formatWeatherParams(value: any): IWeatherQuery {
@@ -76,6 +80,7 @@ class LocationPrompt extends React.Component<ILocationPromptProps,ILocationPromp
           options={this.props.cities}
           onChange={(event: any, value: any) => this.setState({weatherParams: this.formatWeatherParams(value)})}
           onKeyPress={(e: any) => this.handleKeyPress(e) }
+          onBlur={(e:any) => this.handleOnBlur()}
           filterOptions={filterOptions}
           renderInput={(params) => (
             <TextField {...params} label="Enter Zip or City" 
