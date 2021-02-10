@@ -15,6 +15,8 @@ class App extends React.Component<IAppProps,IAppState> {
         weatherData: {
           id: -1,
           temp: -1,
+          feelsLike: -1,
+          windSpeed: -1,
           city: '',
           state: '',
           country: '',
@@ -31,7 +33,6 @@ class App extends React.Component<IAppProps,IAppState> {
 
   async componentDidMount() {
     let _cities = await WeatherService.loadCities();
-    console.log(_cities.length);
     this.setState({
       cities: _cities
     })

@@ -1,60 +1,57 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import LocationDisplay from './LocationDisplay';
 import ReactDOM from 'react-dom';
 import { IWeatherData } from '../../classes/WeatherClasses';
+import { shallow } from 'enzyme';
 
 describe("<LocationDisplay/>", () => {
   const errorProps: IWeatherData = {
-    
+    id: -1,
+    temp: -1,
+    feelsLike: -1,
+    windSpeed: -1,
+    city: '',
+    state: '',
+    country: '',
+    mainDescription: '',
+    detailedDescription: '',
+    iconId: '',
+    errorMessage: 'There is an error'
   };
 
-  
-  // Conditional Render
-  it('initially renders without crashing', () => {
+  const dataProps: IWeatherData = {
+    id: 1,
+    temp: 1,
+    feelsLike: 1,
+    windSpeed: 1,
+    city: '',
+    state: '',
+    country: '',
+    mainDescription: '',
+    detailedDescription: '',
+    iconId: '',
+    errorMessage: ''
+  };
+
+  // Renders
+  it('renders data display', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<App />, div);
+    document.body.appendChild(div);
+    ReactDOM.render(<LocationDisplay weatherData={dataProps}/>, div);
+    expect(screen.getByTestId('dataDisplay')).toBeInTheDocument();
+    const errorDisplay = screen.queryByTestId('errorDisplay')
+    expect(errorDisplay).not.toBeInTheDocument();
     ReactDOM.unmountComponentAtNode(div);
   });
 
-  it('initially renders header', () => {
-    render(<App />);
-    expect(screen.getByText('Palmetto WeatherApp')).toBeInTheDocument();
+  it('renders error display', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    ReactDOM.render(<LocationDisplay weatherData={errorProps}/>, div);
+    expect(screen.getByTestId('errorDisplay')).toBeInTheDocument();
+    const dataDisplay = screen.queryByTestId('dataDisplay')
+    expect(dataDisplay).not.toBeInTheDocument();
+    ReactDOM.unmountComponentAtNode(div);
   });
-
-  it('initally renders picker', () => {
-    render(<App />);
-    expect(screen.getByText('Enter Zip or City')).toBeInTheDocument();
-  });
-
-  it('does not initially renders weather display', () => {
-    render(<App />);
-    expect(screen.queryByTestId('locationDisplay')).not.toBeInTheDocument();
-  });
-
-  // Data Fetch
-  /*it("renders user data", async () => {
-      const fakeUser = {
-        name: "Joni Baez",
-        age: "32",
-        address: "123, Charming Avenue"
-      };
-      jest.spyOn(global, "fetch").mockImplementation(() =>
-        Promise.resolve({
-          json: () => Promise.resolve(fakeUser)
-        })
-      );
-    
-      // Use the asynchronous version of act to apply resolved promises
-      await act(async () => {
-        render(<User id="123" />, container);
-      });
-    
-      expect(container.querySelector("summary").textContent).toBe(fakeUser.name);
-      expect(container.querySelector("strong").textContent).toBe(fakeUser.age);
-      expect(container.textContent).toContain(fakeUser.address);
-    
-      // remove the mock to ensure tests are completely isolated
-      global.fetch.mockRestore();
-  });*/
 });

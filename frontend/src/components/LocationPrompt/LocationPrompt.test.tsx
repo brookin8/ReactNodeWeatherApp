@@ -5,66 +5,107 @@ import { createMount } from "@material-ui/core/test-utils";
 import ReactDOM, { unmountComponentAtNode } from 'react-dom';
 import App from '../../App';
 import { ILocationPromptProps } from './ILocationPrompt';
+import { shallow } from 'enzyme';
+import { IWeatherQuery } from '../../classes/WeatherClasses';
 
-jest.doMock('./ComponentToMock', () => {
-  const ComponentToMock = () => <div />;
-  return ComponentToMock;
-});
-
-// Rendering
-function renderLocationPrompt(props: Partial<ILocationPromptProps> = {}) {
-  const defaultProps: ILocationPromptProps = {
-    getWeather() {
-      return;
-    },
-    cities: []
-  };
-  return render(<LocationPrompt {...defaultProps} {...props} />);
-}
-
-test("should display user instructions for search", async () => {
-  const { queryById } = renderLocationPrompt();
-
-  const loginForm = await findById("autoCOmplete");
-
-  expect(loginForm).toHaveFormValues({
-    username: "",
-    password: "",
-    remember: true
-  });
-});
+// Test onChange
+// Test Keypress
 
 describe("<LocationPrompt/>", () => {
-  let wrapper: any;
-  let mount: any;
-  const props = {
-    getWeather: jest.fn(),
-    cities: []
+  const testProps: any = {
+    getWeather: (params: IWeatherQuery) => {},
+    cities: ['City1', 'City2', 'City3']
   };
 
-  beforeEach(() => {
-      mount = createMount();
-      wrapper = mount(renderLocationPrompt());
+  // Renders
+  it('initially renders without crashing', () => {
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    ReactDOM.render(<LocationPrompt {... testProps} />, div);
+    expect(screen.getByTestId('locationPrompt')).toBeInTheDocument();
+    ReactDOM.unmountComponentAtNode(div);
   });
 
-  // must be called first
-  it("should render ", () => {
-    expect(wrapper.find(Typography).at(0)).toHaveLength(1);
-      expect(
-          wrapper
-              .find(Typography)
-              .at(0)
-              .text(),
-      ).toContain("Edit Profile");
-  });
-  it("calls getWeather on Enter key press", () => {
-      const input = screen.getByTestId("locationPrompt");
-      fireEvent.keyDown(input, { target: { value: "new value" }, key: 'Enter'});
-      expect(props.getWeather).toHaveBeenCalledTimes(1);
-  });
-
-  it("should render <EditProfileForm/>", () => {
-      expect(wrapper).toHaveLength(1);
-  });
+  // Methods
+  describe('formatWeatherParams method', () => {
+    it('handles empty params', () => {
+      let expectedWeatherParams: IWeatherQuery = {};
+      const wrapper = shallow(<LocationPrompt {... testProps}/>);
+      const instance = wrapper.instance() as any;
+      expect(instance.formatWeatherParams('')).toEqual(expectedWeatherParams);
+    });
+    it('handles 5 digit zip', () => {
+      let expectedWeatherParams: IWeatherQuery = {
+        zip: '22903'
+      };
+      const wrapper = shallow(<LocationPrompt {... testProps}/>);
+      const instance = wrapper.instance() as any;
+      expect(instance.formatWeatherParams('22903')).toEqual(expectedWeatherParams);
+    });
+    it('handles 9 digit zip', () => {
+      let expectedWeatherParams: IWeatherQuery = {
+        zip: '22903'
+      };
+      const wrapper = shallow(<LocationPrompt {... testProps}/>);
+      const instance = wrapper.instance() as any;
+      expect(instance.formatWeatherParams('22903-0456')).toEqual(expectedWeatherParams);
+    });
+    it('handles invalid zip', () => {
+      let expectedWeatherParams: IWeatherQuery = {};
+      const wrapper = shallow(<LocationPrompt {... testProps}/>);
+      const instance = wrapper.instance() as any;
+      expect(instance.formatWeatherParams('229034')).toEqual(expectedWeatherParams);
+    });
+    it('handles city', () => {
+      let expectedWeatherParams: IWeatherQuery = {
+        city: 'Charlottesville',
+        state: '',
+        country: ''
+      };
+      const wrapper = shallow(<LocationPrompt {... testProps}/>);
+      const instance = wrapper.instance() as any;
+      expect(instance.formatWeatherParams('Charlottesville')).toEqual(expectedWeatherParams);
+    });
+    it('handles city and state with space after comma', () => {
+      let expectedWeatherParams: IWeatherQuery = {
+        city: 'Charlottesville',
+        state: 'VA',
+        country: ''
+      };
+      const wrapper = shallow(<LocationPrompt {... testProps}/>);
+      const instance = wrapper.instance() as any;
+      expect(instance.formatWeatherParams('Charlottesville, VA')).toEqual(expectedWeatherParams);
+    });
+    it('handles city and state with no space after comma', () => {
+      let expectedWeatherParams: IWeatherQuery = {
+        city: 'Charlottesville',
+        state: 'VA',
+        country: ''
+      };
+      const wrapper = shallow(<LocationPrompt {... testProps}/>);
+      const instance = wrapper.instance() as any;
+      expect(instance.formatWeatherParams('Charlottesville,VA')).toEqual(expectedWeatherParams);
+    });
+    it('handles city and country', () => {
+      let expectedWeatherParams: IWeatherQuery = {
+        city: 'Charlottesville',
+        state: '',
+        country: 'US'
+      };
+      const wrapper = shallow(<LocationPrompt {... testProps}/>);
+      const instance = wrapper.instance() as any;
+      expect(instance.formatWeatherParams('Charlottesville, US')).toEqual(expectedWeatherParams);
+    });
+    it('handles city, state, and country', () => {
+      let expectedWeatherParams: IWeatherQuery = {
+        city: 'Charlottesville',
+        state: 'VA',
+        country: 'US'
+      };
+      const wrapper = shallow(<LocationPrompt {... testProps}/>);
+      const instance = wrapper.instance() as any;
+      expect(instance.formatWeatherParams('Charlottesville, VA, US')).toEqual(expectedWeatherParams);
+    });
+  })
 
 });
