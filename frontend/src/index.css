@@ -3,6 +3,7 @@ html, body, #root {
   max-width: 100%;
   overflow-x: hidden;
   height:100%;
+  background-color: #5caac4;
 }
 
 body {

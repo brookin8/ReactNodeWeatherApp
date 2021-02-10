@@ -9,3 +9,7 @@
 .locationSearchButton {
     cursor: pointer;
 }
+.autoComplete {
+    background-color: white;
+    max-width: 300px;
+}

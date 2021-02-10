@@ -1,10 +1,16 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import App from './App';
+import LocationDisplay from './LocationDisplay';
 import ReactDOM from 'react-dom';
+import { IWeatherData } from '../../classes/WeatherClasses';
 
-describe("<App/>", () => {
-  // Initial Render
+describe("<LocationDisplay/>", () => {
+  const errorProps: IWeatherData = {
+    
+  };
+
+  
+  // Conditional Render
   it('initially renders without crashing', () => {
     const div = document.createElement('div');
     ReactDOM.render(<App />, div);

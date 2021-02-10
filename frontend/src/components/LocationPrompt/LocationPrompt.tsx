@@ -1,11 +1,12 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
-import { Form, FormControl, InputGroup, Row, Col } from 'react-bootstrap';
-import { FiSearch } from 'react-icons/fi';
+import React, { useState } from 'react';
 import { IWeatherQuery } from '../../classes/WeatherClasses';
 import { ILocationPromptProps } from './ILocationPrompt';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import './LocationPrompt.css';
+import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 
-function LocationPrompt({getWeather}: ILocationPromptProps) {
+function LocationPrompt({getWeather, cities}: ILocationPromptProps) {
   const _emptyWeatherParams: IWeatherQuery = {};
   const [weatherParams, setWeatherParams] = useState(_emptyWeatherParams);
   const [errorMessage, setErrorMessage] = useState("");
@@ -17,11 +18,15 @@ function LocationPrompt({getWeather}: ILocationPromptProps) {
     }
   }
   // Parses user input into IWeatherQuery
-  const formatWeatherParams = (e: React.ChangeEvent<any>) => {
+  const formatWeatherParams = (value: any) => {
     let formattedWeatherParams: IWeatherQuery = {};
 
-    let strInput = e.target.value;
-    if(strInput.length < 1) setErrorMessage("Location is not valid")
+    let strInput = value;
+    if(!strInput) return formattedWeatherParams;
+    if(strInput.length < 1) {
+      setErrorMessage("Location is not valid");
+      return formattedWeatherParams;
+    }
 
     // Check for Zip Input First
     if( /^\d+$/.test(strInput[0])) {
@@ -30,7 +35,7 @@ function LocationPrompt({getWeather}: ILocationPromptProps) {
       // Check if they provided in long zip format. If so, trim.
       if(strInput[5] === "-") formattedZip = strInput.slice(0,5);
       // If not right number of characters, return error message
-      if(formattedZip.length != 5) setErrorMessage("Zip code is not valid")
+      if(formattedZip.length != 5) setErrorMessage("Zip code is not valid");
       formattedWeatherParams.zip = formattedZip;
 
     } else { // If City Input
@@ -44,30 +49,30 @@ function LocationPrompt({getWeather}: ILocationPromptProps) {
     return formattedWeatherParams;
   }
 
+  const filterOptions = createFilterOptions({
+    matchFrom: 'start',
+    limit: 5
+  });
+
   return (
     <div className="mtb2rem">
-      <Form>
-        <Form.Row>
-            <Col>
-            <InputGroup className="locationSearchInput">
-              <FormControl
-                id={"location"} 
-                placeholder="Search Location" 
-                onChange={(e: any) => setWeatherParams(formatWeatherParams(e))}
-                onKeyPress={(e: any) => handleKeyPress(e) }/>
-              <InputGroup.Append>
-                <InputGroup.Text> 
-                  <div 
-                    className="locationSearchButton" 
-                    onClick={(e: any) => { getWeather(weatherParams) }}>
-                    <FiSearch />
-                  </div>
-                </InputGroup.Text>
-              </InputGroup.Append>
-            </InputGroup>
-          </Col>
-        </Form.Row>
-      </Form>
+      <Autocomplete
+        id="autoComplete"
+        freeSolo
+        options={cities}
+        onChange={(event: any, value: any) => setWeatherParams(formatWeatherParams(value))}
+        onKeyPress={(e: any) => handleKeyPress(e) }
+        filterOptions={filterOptions}
+        renderInput={(params) => (
+          <TextField {...params} label="Enter Zip or City" 
+            margin="normal" variant="filled" 
+            className="autoComplete" fullWidth
+            inputProps={{
+               "data-testid": "autoCompleteText",
+            }}
+              />
+        )}
+      />
     </div>
   );
 }

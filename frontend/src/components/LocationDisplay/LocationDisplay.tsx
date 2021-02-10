@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Row } from 'react-bootstrap';
+import Grid from '@material-ui/core/Grid';
 import { ILocationDisplayProps } from './ILocationDisplay';
 import './LocationDisplay.css';
 
@@ -22,7 +22,7 @@ function LocationDisplay({weatherData}: ILocationDisplayProps) {
   
   return (
     
-    <div className="locationDisplayCard">
+    <div className="locationDisplayCard mb30">
         {weatherData.errorMessage &&
           <div className="errorMessage">Unable to Retrieve Weather Data: {weatherData.errorMessage}</div>
         }
@@ -33,43 +33,42 @@ function LocationDisplay({weatherData}: ILocationDisplayProps) {
         }
         {(!weatherData.errorMessage && weatherData.id !== undefined && weatherData.id >= 0) &&
         <div>
-          <Row>
-            <Col xs={10}>
+          <Grid container>
+            <Grid item xs>
               <div className="locationName textAlignLeft">{weatherData.city}, {displayName} Weather</div>
-              {weatherData.dt && 
-              <div className="textAlignLeft">{getCurrentTime(weatherData.timezone)}</div>}
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+              <div className="textAlignLeft">{getCurrentTime(weatherData.timezone)}</div>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item xs>
               <div className="textAlignLeft mainTemp">{Math.round(weatherData.temp)}&deg;F</div>
-            </Col>
-            <Col>
-              {weatherData.iconId && 
+            </Grid>
+            <Grid item xs>
+            {weatherData.iconId && 
               <div className="textAlignRight">
                 <img src={"http://openweathermap.org/img/wn/" + weatherData.iconId + "@2x.png"}/>
               </div>}
-            </Col>
-          </Row>
-          <Row className="mb30">
-            <Col>
+            </Grid>
+          </Grid>
+          <Grid container className="mb30">
+            <Grid item xs>
               {weatherData.feelsLike && 
-              <div className="textAlignLeft">Feels Like {Math.round(weatherData.feelsLike)}&deg;F</div>}
-            </Col>
-            <Col>
+                <div className="textAlignLeft">Feels Like {Math.round(weatherData.feelsLike)}&deg;F</div>}
+            </Grid>
+            <Grid item xs>
               <div className="textAlignRight mainDescription">{weatherData.mainDescription}</div>
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
           {weatherData.detailedDescription && 
-          <Row>
-            <Col>
+          <Grid container>
+            <Grid item xs>
               <span className="textAlignLeft">
                 {"Current condition is " + weatherData.detailedDescription}{weatherData.humidity ? ` with ${weatherData.humidity}% humidity. ` : ". "}
               </span>
               {weatherData.windSpeed &&
               <span className="textAlignLeft">Winds are at {Math.round(weatherData.windSpeed)} mph.</span>}
-            </Col>
-          </Row>}
+            </Grid>
+          </Grid>}
         </div>}
     </div>
   );

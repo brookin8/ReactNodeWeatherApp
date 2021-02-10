@@ -29,35 +29,14 @@ const getQuery = function(params) {
   return query;
 }
 
-app.get('/api/currentWeather', async (req, res) => {
-  if(!req.query.zip && !req.query.city) {
-    res.status(500).send(JSON.stringify({ errorMessage: `Please provide a location` }))
-  };
-  
-  let query = getQuery(req.query);
+app.get('/api/loadCities', async (req, res) => {  
   res.setHeader('Content-Type', 'application/json');
-  
   try {
-    const apiResponse = await fetch(
-      `${apiURL}/weather?${query}&units=imperial&appid=${apiKey}`
-    );
-    const apiResponseJson = await apiResponse.json();
-    res.send(apiResponseJson);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send(JSON.stringify({ errorMessage: `There was an error processing the request` }));
-  }
-});
-
-app.get('/api/forecastWeather', async (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  
-  try {
-    const apiResponse = await fetch(
-      `${apiURL}/daily?id=${req.query.id}&cnt=7&units=imperial&appid=${apiKey}`
-    );
-    const apiResponseJson = await apiResponse.json();
-    res.send(apiResponseJson);
+    // See README for optimization next steps
+    const cityResponse = cityCache.map(city => city.name + (city.state ? `, ${city.state}` : '') + `, ${city.country}`);
+    const citiesSortedUnique = [...new Set(cityResponse)].sort();
+    const cityResponseJson = JSON.stringify(citiesSortedUnique);
+    res.send(cityResponseJson);
   } catch (err) {
     console.log(err);
     res.status(500).send(JSON.stringify({ errorMessage: `There was an error processing the request` }));
@@ -66,12 +45,7 @@ app.get('/api/forecastWeather', async (req, res) => {
 
 // Gets state back for US cities from stored city values (not provided in API response)
 app.get('/api/getState', async (req, res) => {  
-  res.setHeader('Content-Type', 'application/json');
-  console.log(req.query.id);
-  console.log(req.query.lat);
-  console.log(req.query.lon);
-  let test = cityCache.find(city => city.name === "Charlottesville" && city.state === "VA");
-  console.log(test);
+  //res.setHeader('Content-Type', 'application/json');
   try {
     const filterResponse = req.query.id > 0 
       ? cityCache.find(city => city.id.toString() === req.query.id)
@@ -88,21 +62,39 @@ app.get('/api/getState', async (req, res) => {
   }
 });
 
-// Future State - Autocomplete
-/*
-app.get('/api/loadCities', async (req, res) => {  
+app.get('/api/currentWeather', async (req, res) => {
+  //res.setHeader('Content-Type', 'application/json');
+  if(!req.query.zip && !req.query.city) {
+    res.status(500).send(JSON.stringify({ errorMessage: `Please provide a location` }))
+  } else {
+    let query = getQuery(req.query);
+    try {
+      const apiResponse = await fetch(
+        `${apiURL}/weather?${query}&units=imperial&appid=${apiKey}`
+      );
+      const apiResponseJson = await apiResponse.json();
+      res.send(apiResponseJson);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(JSON.stringify({ errorMessage: `There was an error processing the request` }));
+    }
+  }
+});
 
-  res.setHeader('Content-Type', 'application/json');
+/* Future State - Forecast Data
+app.get('/api/forecastWeather', async (req, res) => {
+  //res.setHeader('Content-Type', 'application/json');
   try {
-    const cityResponse = cityCache.map(city => city.name + (city.state ? `, ${city.state}` : '') + `, ${city.country}`);
-    const cityResponseJson = cityResponse && cityResponse.length > 0 ? JSON.stringify(cityResponse) : JSON.stringify([]);
-    res.send(cityResponseJson);
+    const apiResponse = await fetch(
+      `${apiURL}/daily?id=${req.query.id}&cnt=7&units=imperial&appid=${apiKey}`
+    );
+    const apiResponseJson = await apiResponse.json();
+    res.send(apiResponseJson);
   } catch (err) {
     console.log(err);
     res.status(500).send(JSON.stringify({ errorMessage: `There was an error processing the request` }));
   }
-});
-*/
+});*/
 
 app.listen(port, () =>
   console.log('Express server is running on localhost:3001'),

@@ -5,7 +5,8 @@ import { WeatherService } from './services/WeatherService';
 import LocationPrompt from './components/LocationPrompt/LocationPrompt';
 import LocationDisplay from './components/LocationDisplay/LocationDisplay';
 import { IAppProps, IAppState } from './IApp';
-import { Col, Container, Row } from 'react-bootstrap';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 
 class App extends React.Component<IAppProps,IAppState> {
   constructor(props: IAppProps) {
@@ -22,9 +23,18 @@ class App extends React.Component<IAppProps,IAppState> {
           iconId: '',
           errorMessage: ''
         },
-        loaded: false
+        loaded: false,
+        cities: Array<string>()
     };
     this.getWeather = this.getWeather.bind(this);
+  }
+
+  async componentDidMount() {
+    let _cities = await WeatherService.loadCities();
+    console.log(_cities.length);
+    this.setState({
+      cities: _cities
+    })
   }
 
   async getWeather(params: IWeatherQuery): Promise<void> {
@@ -37,25 +47,24 @@ class App extends React.Component<IAppProps,IAppState> {
 
   render() {
     return (
-      <Container className="App" fluid>
+      <Container className="App">
         <div className="centerChildren">
-            <div className="maxWidth">
-              <Row>
-                <Col>
+            <div>
+              <Grid container>
+                <Grid item xs>
                   <div className="appName">Palmetto WeatherApp</div>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <LocationPrompt getWeather={this.getWeather}/>
-                </Col>
-              </Row>
-              {this.state.loaded && 
-              <Row>
-                <Col>
-                  <LocationDisplay weatherData={this.state.weatherData}/>
-                </Col>
-              </Row>}
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs>
+                  <LocationPrompt getWeather={this.getWeather} cities={this.state.cities}/>
+                </Grid>
+              </Grid>
+              {this.state.loaded && <Grid container>
+                <Grid item xs>
+                  <LocationDisplay data-testid="locationDisplay" weatherData={this.state.weatherData}/>
+                </Grid>
+              </Grid>}
             </div>
         </div>
       </Container>
