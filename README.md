@@ -11,7 +11,8 @@ A weather app built using React, Typescript and Node
 # To Run in Development
 - Run npm i from the command line in root, frontend, and backend directories
 - Navigate back to root directory, and run "npm run dev" (Concurrently will start up both the back and front end)
-- Make sure you have a .env file in the backend directory on the same level as server.js with the following variables defined: NODE_ENV=development, API_KEY=*******************************, API_URL=http://api.openweathermap.org/data/2.5, PORT = 3001
+- Make sure you have a .env file in the backend directory on the same level as server.js with the following variables defined: NODE_ENV=development, API_KEY=*******************************, API_URL=http://api.openweathermap.org/data/2.5, PORT = 3001 
+(I gave Trevor my API_KEY with the link to this repo)
 
 # Future Enhancements
 - Optimize autocomplete (look into virtualization, store city data in a much better (sorted) way, use cases for caching)
