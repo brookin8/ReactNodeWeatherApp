@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
-import { IWeatherData, IWeatherQuery } from './classes/WeatherClasses';
-import {  WeatherService } from './services/WeatherService';
+import { IWeatherQuery } from './classes/WeatherClasses';
+import { WeatherService } from './services/WeatherService';
 import LocationPrompt from './components/LocationPrompt/LocationPrompt';
 import LocationDisplay from './components/LocationDisplay/LocationDisplay';
 import { IAppProps, IAppState } from './IApp';
@@ -41,7 +41,9 @@ class App extends React.Component<IAppProps,IAppState> {
         <div className="centerChildren">
             <div className="maxWidth">
               <Row>
-                <Col><div className="appName">Palmetto WeatherApp</div></Col>
+                <Col>
+                  <div className="appName">Palmetto WeatherApp</div>
+                </Col>
               </Row>
               <Row>
                 <Col>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Form, Button, FormControl, InputGroup, Row, Col } from 'react-bootstrap';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
+import { Form, FormControl, InputGroup, Row, Col } from 'react-bootstrap';
 import { FiSearch } from 'react-icons/fi';
 import { IWeatherQuery } from '../../classes/WeatherClasses';
 import { ILocationPromptProps } from './ILocationPrompt';
@@ -10,6 +10,12 @@ function LocationPrompt({getWeather}: ILocationPromptProps) {
   const [weatherParams, setWeatherParams] = useState(_emptyWeatherParams);
   const [errorMessage, setErrorMessage] = useState("");
   
+  const handleKeyPress = (e: React.KeyboardEvent<any>) => {
+    if(e.key.toLowerCase() === 'enter') {
+      e.preventDefault();
+      getWeather(weatherParams);
+    }
+  }
   // Parses user input into IWeatherQuery
   const formatWeatherParams = (e: React.ChangeEvent<any>) => {
     let formattedWeatherParams: IWeatherQuery = {};
@@ -35,9 +41,9 @@ function LocationPrompt({getWeather}: ILocationPromptProps) {
       formattedWeatherParams.state = strArray.length > 1 ? strArray[1] : null;
       formattedWeatherParams.country = strArray.length > 2 ? strArray[2] : null;
     }
-    console.log(formattedWeatherParams);
     return formattedWeatherParams;
   }
+
   return (
     <div className="mtb2rem">
       <Form>
@@ -47,13 +53,13 @@ function LocationPrompt({getWeather}: ILocationPromptProps) {
               <FormControl
                 id={"location"} 
                 placeholder="Search Location" 
-                onChange={(e) => setWeatherParams(formatWeatherParams(e))}
-              />
+                onChange={(e: any) => setWeatherParams(formatWeatherParams(e))}
+                onKeyPress={(e: any) => handleKeyPress(e) }/>
               <InputGroup.Append>
                 <InputGroup.Text> 
                   <div 
                     className="locationSearchButton" 
-                    onClick={(e) => getWeather(weatherParams)}>
+                    onClick={(e: any) => { getWeather(weatherParams) }}>
                     <FiSearch />
                   </div>
                 </InputGroup.Text>

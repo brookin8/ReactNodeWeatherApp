@@ -5,6 +5,8 @@ import './LocationDisplay.css';
 
 function LocationDisplay({weatherData}: ILocationDisplayProps) {
 
+  const displayName = weatherData.state ? `${weatherData.state}` : `${weatherData.country}`;
+  
   // Get current local time in displayed location
   const getCurrentTime = (timezoneOffset: number = 0) => {
 
@@ -17,7 +19,6 @@ function LocationDisplay({weatherData}: ILocationDisplayProps) {
    
     return (date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }));
   }
-
   
   return (
     
@@ -25,16 +26,16 @@ function LocationDisplay({weatherData}: ILocationDisplayProps) {
         {weatherData.errorMessage &&
           <div className="errorMessage">Unable to Retrieve Weather Data: {weatherData.errorMessage}</div>
         }
-        {(!weatherData.id || weatherData.id < 0) &&
+        {(weatherData.id === undefined || weatherData.id < 0) &&
           <div className="errorMessage">
             No weather data found for that location.
           </div>
         }
-        {!weatherData.errorMessage && weatherData.id && weatherData.id >= 0 &&
+        {(!weatherData.errorMessage && weatherData.id !== undefined && weatherData.id >= 0) &&
         <div>
-          <Row className="mb10">
+          <Row>
             <Col xs={10}>
-              <div className="locationName textAlignLeft">{weatherData.city} Weather</div>
+              <div className="locationName textAlignLeft">{weatherData.city}, {displayName} Weather</div>
               {weatherData.dt && 
               <div className="textAlignLeft">{getCurrentTime(weatherData.timezone)}</div>}
             </Col>
@@ -63,7 +64,7 @@ function LocationDisplay({weatherData}: ILocationDisplayProps) {
           <Row>
             <Col>
               <span className="textAlignLeft">
-                {"Current condition is " + weatherData.detailedDescription}{weatherData.humidity ? ` with ${weatherData.humidity}% humidity.` : "."}
+                {"Current condition is " + weatherData.detailedDescription}{weatherData.humidity ? ` with ${weatherData.humidity}% humidity. ` : ". "}
               </span>
               {weatherData.windSpeed &&
               <span className="textAlignLeft">Winds are at {Math.round(weatherData.windSpeed)} mph.</span>}
